@@ -5,6 +5,7 @@ import SignatureCanvas from 'react-signature-canvas';
 import { Html5Qrcode}  from "html5-qrcode";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { auth } from "../firebase/firebase.config"; // adjust path as needed
 
 const FormFiller = ({ formId, initialDarkMode = false }) => {
   const [form, setForm] = useState(null);
@@ -180,6 +181,19 @@ const [activeScannerField, setActiveScannerField] = useState(null);
         
         formResponses[formId].push(responseData);
         localStorage.setItem('formResponses', JSON.stringify(formResponses));
+
+        // --- Real-time backend sync ---
+      if (auth.currentUser?.uid) {
+        await fetch(`${import.meta.env.VITE_API_BASE_URL}/responses/save`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            uid: auth.currentUser.uid,
+            responses: formResponses, // send all responses for this user
+          }),
+        });
+      }
+
         
         const savedProgress = JSON.parse(localStorage.getItem('formFillerProgress') || '{}');
         delete savedProgress[formId];

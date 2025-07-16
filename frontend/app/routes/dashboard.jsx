@@ -17,20 +17,25 @@ export default function Dashboard() {
   return (
     <ProtectedRoute>
       {user ? (
-        <div className="p-6">
-          <h2 className="text-xl font-semibold">Welcome, {user.email}</h2>
-          <button
-            onClick={() => {
-              auth.signOut();
-              navigate("/login");
-            }}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded"
-          >
-            Logout
-          </button>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-cyan-50">
+          <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
+            <h2 className="text-2xl font-bold mb-2 text-purple-700">Welcome!</h2>
+            <p className="text-gray-700 mb-6">{user.email}</p>
+            <button
+              onClick={() => {
+                auth.signOut();
+                navigate("/login");
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-lg transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       ) : (
-        <div>Loading...</div>
+        <div className="min-h-screen flex items-center justify-center">
+          <span className="text-gray-500 text-lg">Loading...</span>
+        </div>
       )}
     </ProtectedRoute>
   );

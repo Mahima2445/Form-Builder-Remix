@@ -19,11 +19,11 @@ COPY --from=builder /usr/src/app .
 
 EXPOSE 5173
 
-CMD ["serve", "-s", "public", "-l", "5173"]
+CMD ["npm", "run", "start"]
 #FROM node:20-alpine
 #WORKDIR /usr/src/app
 #COPY package*.json ./
 #RUN npm install
 #COPY . .
 #EXPOSE 5173
-#CMD ["npm", "run", "dev"]
+#CMD ["serve", "-s", "public", "-l", "5173"]

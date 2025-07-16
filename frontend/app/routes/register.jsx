@@ -1,15 +1,15 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
 import { useNavigate } from "@remix-run/react";
 import { syncUserDataToMongo } from "../utils/syncUserData";
-
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) navigate("/dashboard");
@@ -22,14 +22,11 @@ export default function Register() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-       await syncUserDataToMongo(user);
+      await syncUserDataToMongo(user);
 
-      // ✅ Save user to backend (MongoDB)
       await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/save-user`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           uid: user.uid,
           email: user.email,
@@ -37,35 +34,51 @@ export default function Register() {
         }),
       });
 
-      navigate("/dashboard");
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto mt-10 border rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">Register</h2>
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleRegister} className="space-y-4">
-        <input
-          className="w-full p-2 border"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="w-full p-2 border"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button className="bg-green-600 text-white px-4 py-2 rounded" type="submit">
-          Register
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-cyan-50">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <h2 className="text-3xl font-bold mb-6 text-center text-purple-700">Register</h2>
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+        <form onSubmit={handleRegister} className="space-y-5">
+          <input
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
+            type="submit"
+          >
+            Register
+          </button>
+        </form>
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="text-purple-600 hover:underline font-medium"
+          >
+            Login
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

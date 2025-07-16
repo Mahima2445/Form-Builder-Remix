@@ -22,9 +22,9 @@ services:
       - backend
 
   mongo:
-    image: mongo:6.0
+    image: mongo:latest
     ports:
-      - "27018:27018"
+      - "27018:27017"
     volumes:
       - mongo-data:/data/db
 
